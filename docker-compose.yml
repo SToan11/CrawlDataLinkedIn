@@ -43,6 +43,8 @@ services:
       - .env
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/linkedin_crawl
+    volumes:
+      - ./debug-artifacts:/app/debug-artifacts
     command: sh -c "npm run prisma:deploy && npm run start:worker"
 
 volumes:

@@ -174,6 +174,7 @@ CRAWL_STRATEGY=official_api
 # OR
 CRAWL_STRATEGY=playwright_scrape
 LINKEDIN_COOKIE_LI_AT=...
+DEBUG_ARTIFACTS_DIR=debug-artifacts
 ```
 
 ## 4. Run Locally (without Docker)
@@ -217,6 +218,12 @@ curl -X POST http://localhost:3000/crawl \
 
 ```bash
 curl http://localhost:3000/crawl/1
+```
+
+8. Get detailed crawled profiles for a job:
+
+```bash
+curl http://localhost:3000/crawl/1/profiles
 ```
 
 ## 5. Run with Docker
@@ -276,6 +283,10 @@ Get status:
 
 - The crawler returns partial fields depending on strategy and page/API availability.
 - Playwright selectors can break when LinkedIn changes UI; adjust selectors in `src/crawler/playwrightCrawler.ts`.
+- When Playwright returns `0` profiles, debug artifacts are written to `${DEBUG_ARTIFACTS_DIR}`:
+  - `linkedin-zero-*.png` screenshot
+  - `linkedin-zero-*.html` DOM snapshot
+  - `pageUrl` is logged in worker logs
 - Ports:
   - API: `${API_PORT}` (default `3000`)
   - PostgreSQL host port: `${POSTGRES_PORT}` (default `5432`)

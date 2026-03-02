@@ -1,5 +1,6 @@
 import express from "express";
 import { createJob, getJobById } from "../db/jobsRepo";
+import { getProfilesByJobId } from "../db/profilesRepo";
 import { logger, serializeError } from "../utils/logger";
 
 export function buildServer(): express.Express {
@@ -62,6 +63,28 @@ export function buildServer(): express.Express {
     } catch (err) {
       logger.error("GET /crawl/:id failed", { error: serializeError(err) });
       return res.status(500).json({ error: "Failed to fetch job" });
+    }
+  });
+
+  // Detail endpoint: returns all crawled profiles for a given job id.
+  app.get("/crawl/:id/profiles", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) return res.status(400).json({ error: "invalid id" });
+
+      const job = await getJobById(id);
+      if (!job) return res.status(404).json({ error: "job not found" });
+
+      const profiles = await getProfilesByJobId(id);
+      return res.json({
+        jobId: id,
+        jobStatus: job.status,
+        count: profiles.length,
+        profiles
+      });
+    } catch (err) {
+      logger.error("GET /crawl/:id/profiles failed", { error: serializeError(err) });
+      return res.status(500).json({ error: "Failed to fetch profiles" });
     }
   });
 

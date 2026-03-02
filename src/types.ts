@@ -20,3 +20,11 @@ export interface LinkedInProfileData {
   posts?: string[];
   raw?: Record<string, unknown>;
 }
+
+export interface StoredLinkedInProfile {
+  id: string;
+  job_id: number;
+  profile_url: string | null;
+  profile_json: LinkedInProfileData;
+  created_at: Date;
+}

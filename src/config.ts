@@ -37,6 +37,7 @@ export const config = {
     password: process.env.LINKEDIN_PASSWORD || "",
     liAtCookie: process.env.LINKEDIN_COOKIE_LI_AT || "",
     proxyUrl: process.env.PROXY_URL || "",
+    debugArtifactsDir: process.env.DEBUG_ARTIFACTS_DIR || "debug-artifacts",
     headless: (process.env.PLAYWRIGHT_HEADLESS || "true") === "true",
     minDelayMs: parseNumber("MIN_DELAY_MS", 1200),
     maxDelayMs: parseNumber("MAX_DELAY_MS", 3500)
