@@ -8,6 +8,8 @@ This project provides:
   - `official_api` (uses LinkedIn API where allowed)
   - `playwright_scrape` (fallback browser automation)
 
+Quick command-only guide: see `RUN_COMMANDS.md`.
+
 > Important: LinkedIn Terms of Service and API policies may restrict data collection, automated access, and storage. Use only with proper authorization and legal review.
 
 ## Architecture
