@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CrawlJob {
+  id           Int               @id @default(autoincrement())
+  keyword      String
+  limitCount   Int               @map("limit_count")
+  status       CrawlJobStatus
+  errorMessage String?           @map("error_message")
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  profiles     LinkedInProfile[]
+
+  @@index([status], map: "idx_crawl_jobs_status")
+  @@map("crawl_jobs")
+}
+
+model LinkedInProfile {
+  id          BigInt   @id @default(autoincrement())
+  jobId       Int      @map("job_id")
+  profileUrl  String?  @map("profile_url")
+  profileJson Json     @map("profile_json")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  job         CrawlJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId], map: "idx_linkedin_profiles_job_id")
+  @@map("linkedin_profiles")
+}
+
+enum CrawlJobStatus {
+  pending
+  running
+  completed
+  failed
+}

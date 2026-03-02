@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: linkedin-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: linkedin_crawl
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d linkedin_crawl"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: linkedin-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/linkedin_crawl
+    ports:
+      - "${API_PORT:-3000}:${API_PORT:-3000}"
+    command: sh -c "npm run prisma:deploy && npm run start:api"
+
+  worker:
+    build: .
+    container_name: linkedin-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/linkedin_crawl
+    command: sh -c "npm run prisma:deploy && npm run start:worker"
+
+volumes:
+  pg_data:
